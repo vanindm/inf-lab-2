@@ -11,6 +11,7 @@ class DynamicArray
         DynamicArray(T* items, int count);
         DynamicArray(int size);
         DynamicArray(const DynamicArray<T>& dynamicArray);
+        ~DynamicArray();
         T get(int index);
         int getSize();
         void set(int index, T value);
@@ -41,6 +42,12 @@ PATypes::DynamicArray<T>::DynamicArray(const DynamicArray<T>& dynamicArray) : si
 {
     this->items = new T[this->size];
     std::memcpy(this->items, dynamicArray->items, size * sizeof(T));
+}
+
+template<class T>
+PATypes::DynamicArray<T>::~DynamicArray()
+{
+    delete[] items;
 }
 
 template<class T>
