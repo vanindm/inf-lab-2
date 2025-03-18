@@ -1,5 +1,6 @@
 #pragma once
 #include <cstring>
+#include <stdexcept>
 
 namespace PATypes 
 {
@@ -16,6 +17,7 @@ class DynamicArray
         int getSize();
         void set(int index, T value);
         void resize(int newSize);
+        T& operator[](int index);
     private:
         T* items;
         int size;
@@ -53,6 +55,8 @@ PATypes::DynamicArray<T>::~DynamicArray()
 template<class T>
 T PATypes::DynamicArray<T>::get(int index)
 {
+    if (index < 0 || index > this->size)
+        throw std::out_of_range("Попытка обращения к элементу за границами динамического массива");
     return this->items[index];
 }
 
@@ -76,4 +80,12 @@ void PATypes::DynamicArray<T>::resize(int newSize)
     this->size = newSize;
     delete[] this->items;
     this->items = newItems;
+}
+
+template<class T>
+T& PATypes::DynamicArray<T>::operator[](int index)
+{
+    if (index < 0 || index > this->size - 1)
+        throw std::out_of_range("Попытка обращения к элементу за границами динамического массива");
+    return this->items[index];
 }

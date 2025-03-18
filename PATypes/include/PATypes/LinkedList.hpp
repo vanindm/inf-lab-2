@@ -4,12 +4,29 @@ namespace PATypes
 {
 
 template<class T>
+class LinkedListNode
+{
+    public:
+        LinkedListNode(T val, LinkedListNode* next = nullptr);
+        LinkedListNode* getNext();
+        ~LinkedListNode();
+        T& get();
+        void set(T value);
+        void setNext(LinkedListNode* newNext);
+    private:
+        T value;
+        LinkedListNode* next;
+};
+
+template<class T>
 class LinkedList
 {
     public:
         LinkedList(T* items, int count);
         LinkedList();
+        LinkedList(LinkedListNode<T>* start, int count);
         LinkedList(const LinkedList<T>& list);
+        ~LinkedList();
         T getFirst();
         T getLast();
         T get(int index);
@@ -20,6 +37,225 @@ class LinkedList
         void insertAt(T item, int index);
         LinkedList<T>* concat(LinkedList<T> *list);
     private:
+        int size;
+        LinkedListNode<T>* head;
+        LinkedListNode<T>& getNode(int index);
+        LinkedListNode<T>& getFirstNode();
+        LinkedListNode<T>& getLastNode();
 };
 
 };
+
+template<class T>
+PATypes::LinkedListNode<T>::LinkedListNode(T val, LinkedListNode* next) : value(val), next(next)
+{
+}
+
+template<class T>
+PATypes::LinkedListNode<T>::~LinkedListNode()
+{
+    if (this->next)
+        delete this->next;
+}
+
+template<class T>
+PATypes::LinkedListNode<T>* PATypes::LinkedListNode<T>::getNext()
+{
+    return this->next;
+}
+
+template<class T>
+T& PATypes::LinkedListNode<T>::get()
+{
+    return this->value;
+}
+
+template<class T>
+void PATypes::LinkedListNode<T>::set(T value)
+{
+    this->value = value;
+}
+
+template<class T>
+void PATypes::LinkedListNode<T>::setNext(PATypes::LinkedListNode<T>* newNext)
+{
+    this->next = newNext;
+}
+
+template<class T>
+PATypes::LinkedList<T>::LinkedList(T* items, int count) : size(count)
+{
+    this->head = new PATypes::LinkedListNode<T>(items[0]);
+    PATypes::LinkedListNode<T>* current = this->head;
+    PATypes::LinkedListNode<T>* intermediate = nullptr;
+    for (int i = 1; i < count; ++i)
+    {
+        intermediate = new PATypes::LinkedListNode<T>(items[i]);
+        current->setNext(intermediate);
+        current = current->getNext();
+    }
+}
+
+template<class T>
+PATypes::LinkedList<T>::LinkedList()
+{
+    this->head = nullptr;
+}
+
+template<class T>
+PATypes::LinkedList<T>::LinkedList(PATypes::LinkedListNode<T>* start, int count) : size(count)
+{
+    this->head = new PATypes::LinkedListNode<T>(start->get());
+    PATypes::LinkedListNode<T>* current = this->head;
+    PATypes::LinkedListNode<T>* currentSource = start;
+    PATypes::LinkedListNode<T>* intermediate = nullptr;
+    for (int i = 1; i < count; ++i)
+    {
+        if (current == nullptr)
+            throw std::out_of_range("Выход за границы при попытке создания LinkedList из LinkedListNode");
+        intermediate = new PATypes::LinkedListNode<T>(currentSource->getNext()->get());
+        current->setNext(intermediate);
+        current = current->getNext();
+    }
+}
+
+template<class T>
+PATypes::LinkedList<T>::LinkedList(const LinkedList<T>& list)
+{
+    this->head = new PATypes::LinkedListNode<T>(list.head);
+    PATypes::LinkedListNode<T>* current = this->head;
+    PATypes::LinkedListNode<T>* intermediate = nullptr;
+    PATypes::LinkedListNode<T>* currentSource = list.head;
+    while(currentSource->getNext() != nullptr)
+    {
+        intermediate = new PATypes::LinkedListNode<T>(currentSource->getNext()->get());
+        current->setNext(intermediate);
+        currentSource = currentSource->getNext();
+    }
+}
+
+template<class T>
+PATypes::LinkedList<T>::~LinkedList()
+{
+    delete this->head;
+}
+
+template<class T>
+PATypes::LinkedListNode<T>& PATypes::LinkedList<T>::getNode(int index) {
+    if (index < 0 || index >= this->size)
+        throw std::out_of_range("Выход за границы при попытке получения LinkedListNode по индексу");
+    PATypes::LinkedListNode<T>* current = this->head;
+    for (int i = 0; i < index; i++)
+    {
+        current = current->getNext();
+        if (current == nullptr)
+            throw std::out_of_range("Выход за границы при попытке получения LinkedListNode по индексу");
+    }
+    return *current;
+}
+
+template<class T>
+PATypes::LinkedListNode<T>& PATypes::LinkedList<T>::getFirstNode() {
+    return *this->head;
+}
+
+template<class T>
+PATypes::LinkedListNode<T>& PATypes::LinkedList<T>::getLastNode() {
+    PATypes::LinkedListNode<T>* current = this->head;
+    while(current->getNext() != nullptr)
+    {
+        current = current->getNext();
+    }
+    return *current;
+}
+
+template<class T>
+T PATypes::LinkedList<T>::getFirst()
+{
+    return this->getFirstNode().get();
+}
+
+template<class T>
+T PATypes::LinkedList<T>::getLast()
+{
+    return this->getLastNode().get();
+}
+
+template<class T>
+T PATypes::LinkedList<T>::get(int index)
+{
+    try
+    {
+        return this->getNode(index).get();
+    } catch (std::out_of_range const&) {
+        throw std::out_of_range("Выход за границы при попытке получения элемента LinkedList по индексу");
+    }
+}
+
+template<class T>
+PATypes::LinkedList<T>* PATypes::LinkedList<T>::getSubList(int startIndex, int endIndex)
+{
+    if (startIndex < 0 || startIndex >= this->size || endIndex < 0 || endIndex >= this->size)
+        throw std::out_of_range("Выход за границы при попытке получения subList LinkedList");
+    PATypes::LinkedListNode<T>* current = this->head;
+    for (int i = 0; i < startIndex; i++)
+    {
+        current = current->getNext();
+        if (current == nullptr)
+            throw std::out_of_range("Выход за границы при попытке получения subList LinkedList");
+    }
+    return new PATypes::LinkedList<T>(current, endIndex - startIndex + 1);
+}
+
+template<class T>
+int PATypes::LinkedList<T>::getLength()
+{
+    return this->size;
+}
+
+template<class T>
+void PATypes::LinkedList<T>::append(T item)
+{
+    this->size++;
+    this->getLastNode().setNext(new LinkedListNode<T>(item));
+}
+
+template<class T>
+void PATypes::LinkedList<T>::prepend(T item)
+{
+    this->size++;
+    PATypes::LinkedListNode<T>* newHead = new PATypes::LinkedListNode<T>(item);
+    newHead->setNext(this->head);
+    this->head = newHead;
+}
+
+template<class T>
+void PATypes::LinkedList<T>::insertAt(T item, int index)
+{
+    try
+    {
+        PATypes::LinkedListNode<T>& newNode(item);
+        newNode->setNext(this->getNode(index));
+        if (index > 0)
+            this->getNode(index - 1).setNext(newNode);
+    } catch (std::out_of_range)
+    {
+        throw std::out_of_range("Выход за границы при попытке получения добавить к LinkedList элемент по индексу");
+    }
+}
+
+template<class T>
+PATypes::LinkedList<T>* PATypes::LinkedList<T>::concat(PATypes::LinkedList<T> *list)
+{
+    PATypes::LinkedListNode<T>* current = &(this->getLastNode());
+    PATypes::LinkedListNode<T>* currentOriginal = &(list->getFirstNode());
+    current->setNext(new PATypes::LinkedListNode<T>(currentOriginal->get()));
+    current = current->getNext();
+    while(currentOriginal->getNext()) {
+        current->setNext(new PATypes::LinkedListNode<T>(currentOriginal->getNext()->get()));
+        current = current->getNext();
+        currentOriginal = currentOriginal->getNext();
+    }
+    this->size += list->size;
+    return this;
+}
