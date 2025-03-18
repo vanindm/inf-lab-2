@@ -156,12 +156,16 @@ PATypes::LinkedListNode<T>& PATypes::LinkedList<T>::getNode(int index) {
 
 template<class T>
 PATypes::LinkedListNode<T>& PATypes::LinkedList<T>::getFirstNode() {
+    if (this->head == nullptr)
+        throw std::out_of_range("при попытке получения начала списка LinkedList пуст");
     return *this->head;
 }
 
 template<class T>
 PATypes::LinkedListNode<T>& PATypes::LinkedList<T>::getLastNode() {
     PATypes::LinkedListNode<T>* current = this->head;
+    if (current == nullptr)
+        throw std::out_of_range("при попытке получения конца списка LinkedList пуст");
     while(current->getNext() != nullptr)
     {
         current = current->getNext();

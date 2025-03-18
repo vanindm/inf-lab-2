@@ -43,7 +43,7 @@ template<class T>
 PATypes::DynamicArray<T>::DynamicArray(const DynamicArray<T>& dynamicArray) : size(dynamicArray.size)
 {
     this->items = new T[this->size];
-    std::memcpy(this->items, dynamicArray->items, size * sizeof(T));
+    std::memcpy(this->items, dynamicArray.items, size * sizeof(T));
 }
 
 template<class T>
@@ -76,7 +76,7 @@ template<class T>
 void PATypes::DynamicArray<T>::resize(int newSize)
 {
     T* newItems = new T[newSize];
-    std::memcpy(this->newItems, this->items, this->size * sizeof(T));
+    std::memcpy(newItems, this->items, this->size * sizeof(T));
     this->size = newSize;
     delete[] this->items;
     this->items = newItems;
