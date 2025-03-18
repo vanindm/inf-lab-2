@@ -3,46 +3,46 @@
 namespace PATypes
 {
 
-template<class T>
-class LinkedListNode
-{
-    public:
-        LinkedListNode(T val, LinkedListNode* next = nullptr);
-        LinkedListNode* getNext();
-        ~LinkedListNode();
-        T& get();
-        void set(T value);
-        void setNext(LinkedListNode* newNext);
-    private:
-        T value;
-        LinkedListNode* next;
-};
+    template<class T>
+    class LinkedListNode
+    {
+        public:
+            LinkedListNode(T val, LinkedListNode* next = nullptr);
+            LinkedListNode* getNext();
+            ~LinkedListNode();
+            T& get();
+            void set(T value);
+            void setNext(LinkedListNode* newNext);
+        private:
+            T value;
+            LinkedListNode* next;
+    };
 
-template<class T>
-class LinkedList
-{
-    public:
-        LinkedList(T* items, int count);
-        LinkedList();
-        LinkedList(LinkedListNode<T>* start, int count);
-        LinkedList(const LinkedList<T>& list);
-        ~LinkedList();
-        T getFirst();
-        T getLast();
-        T get(int index);
-        LinkedList<T>* getSubList(int startIndex, int endIndex);
-        int getLength();
-        void append(T item);
-        void prepend(T item);
-        void insertAt(T item, int index);
-        LinkedList<T>* concat(LinkedList<T> *list);
-    private:
-        int size;
-        LinkedListNode<T>* head;
-        LinkedListNode<T>& getNode(int index);
-        LinkedListNode<T>& getFirstNode();
-        LinkedListNode<T>& getLastNode();
-};
+    template<class T>
+    class LinkedList
+    {
+        public:
+            LinkedList(T* items, int count);
+            LinkedList();
+            LinkedList(LinkedListNode<T>* start, int count);
+            LinkedList(const LinkedList<T>& list);
+            ~LinkedList();
+            T getFirst();
+            T getLast();
+            T get(int index);
+            LinkedList<T>* getSubList(int startIndex, int endIndex);
+            int getLength();
+            void append(T item);
+            void prepend(T item);
+            void insertAt(T item, int index);
+            LinkedList<T>* concat(LinkedList<T> *list);
+        private:
+            int size;
+            LinkedListNode<T>* head;
+            LinkedListNode<T>& getNode(int index);
+            LinkedListNode<T>& getFirstNode();
+            LinkedListNode<T>& getLastNode();
+    };
 
 };
 

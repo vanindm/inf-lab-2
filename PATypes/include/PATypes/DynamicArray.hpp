@@ -5,23 +5,23 @@
 namespace PATypes 
 {
 
-template<class T>
-class DynamicArray
-{
-    public:
-        DynamicArray(T* items, int count);
-        DynamicArray(int size);
-        DynamicArray(const DynamicArray<T>& dynamicArray);
-        ~DynamicArray();
-        T get(int index);
-        int getSize();
-        void set(int index, T value);
-        void resize(int newSize);
-        T& operator[](int index);
-    private:
-        T* items;
-        int size;
-};
+    template<class T>
+    class DynamicArray
+    {
+        public:
+            DynamicArray(T* items, int count);
+            DynamicArray(int size);
+            DynamicArray(const DynamicArray<T>& dynamicArray);
+            ~DynamicArray();
+            T get(int index);
+            int getSize();
+            void set(int index, T value);
+            void resize(int newSize);
+            T& operator[](int index);
+        private:
+            T* items;
+            int size;
+    };
 
 };
 
