@@ -33,6 +33,7 @@ namespace PATypes
             virtual Sequence<T>* append(T item);
             virtual Sequence<T>* insertAt(T item, int index);
             virtual Sequence<T>* concat(Sequence<T> *list);
+            T operator[](int index);
         private:
             DynamicArray<T> array;
             int size;
@@ -93,6 +94,11 @@ namespace PATypes
         for (int i = 0; i < list->getLength(); ++i)
             current->append(list->get(i));
         return current;
+    }
+
+    template<class T>
+    T ArraySequence<T>::operator[](int index) {
+        return this->array[index];
     }
 
     template<class T>

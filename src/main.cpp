@@ -11,7 +11,7 @@ int main()
     PATypes::MutableArraySequence<int> seq2(arr, 4);
     seq.concat(&seq2);
     for (int i = 0; i < 8; i++) {
-        std::cout << seq.get(i) << " ";
+        std::cout << seq[i] << " ";
     }
     delete[] arr;
     return 0;
