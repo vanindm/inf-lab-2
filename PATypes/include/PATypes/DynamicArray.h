@@ -10,6 +10,7 @@ namespace PATypes {
         DynamicArray(T *items, int count);
         DynamicArray(int size);
         DynamicArray(const DynamicArray<T> &dynamicArray);
+        DynamicArray(int size, const DynamicArray<T> &dynamicArray);
         ~DynamicArray();
         T get(int index);
         int getSize();
@@ -38,6 +39,12 @@ PATypes::DynamicArray<T>::DynamicArray(int size) : size(size) {
 
 template<class T>
 PATypes::DynamicArray<T>::DynamicArray(const DynamicArray<T> &dynamicArray) : size(dynamicArray.size) {
+    this->items = new T[this->size];
+    std::memcpy(this->items, dynamicArray.items, size * sizeof(T));
+}
+
+template<class T>
+PATypes::DynamicArray<T>::DynamicArray(int size, const DynamicArray<T> &dynamicArray) : size(size) {
     this->items = new T[this->size];
     std::memcpy(this->items, dynamicArray.items, size * sizeof(T));
 }

@@ -18,7 +18,14 @@ namespace PATypes {
         virtual Sequence<T> *concat(Sequence<T> *list) = 0;
         virtual Sequence<T> *map(T (*f)(T)) = 0;
         virtual T operator[](int index) = 0;
+        Sequence<T>& operator+(Sequence<T> &sequence);
     };
+
+    template<class T>
+    Sequence<T> &Sequence<T>::operator+(Sequence<T> &sequence) {
+        Sequence<T>& aaa = *concat(&sequence);
+        return *(this->concat(&sequence));
+    }
 
     template<class T>
     class ArraySequence : public Sequence<T> {
@@ -26,6 +33,7 @@ namespace PATypes {
         ArraySequence(T *items, int count) : array(items, count) {}
         ArraySequence() : array(0) {};
         ArraySequence(const ArraySequence &arraySequence) : array(arraySequence.array) {};
+        ArraySequence(Sequence<T> &sequence);
         virtual T getFirst();
         virtual T getLast();
         virtual T get(int index);
@@ -38,6 +46,7 @@ namespace PATypes {
         virtual Sequence<T> *concat(Sequence<T> *list);
         virtual Sequence<T> *map(T (*f)(T));
         T operator[](int index);
+        ArraySequence<T>& operator=(ArraySequence<T> other);
 
     private:
         DynamicArray<T> array;
@@ -96,8 +105,11 @@ namespace PATypes {
     template<class T>
     Sequence<T> *ArraySequence<T>::concat(Sequence<T> *list) {
         ArraySequence<T> *current = Instance();
+        int previousLength = current->getLength();
+        DynamicArray<int>* array = new DynamicArray<int>(previousLength + list->getLength(), this->array);
+        current->array = *array;
         for (int i = 0; i < list->getLength(); ++i)
-            current->append(list->get(i));
+            current->array.set(i + previousLength, list->get(i));
         return current;
     }
 
@@ -123,12 +135,25 @@ namespace PATypes {
             current->array.set(f(current->array.get(i)), i);
         return current;
     }
+    template<class T>
+    ArraySequence<T>::ArraySequence(Sequence<T> &sequence) : array(sequence.getLength()) {
+        for (int i = 0; i < sequence.getLength(); ++i) {
+            array.set(i, sequence.get(i));
+        }
+    }
+
+    template<class T>
+    ArraySequence<T> &ArraySequence<T>::operator=(ArraySequence<T> other) {
+        std::swap(array, other.array);
+        return *this;
+    }
 
     template<class T>
     class ImmutableArraySequence : public ArraySequence<T> {
     public:
         ImmutableArraySequence(T *items, int count) : ArraySequence<T>(items, count){};
         ImmutableArraySequence() : ArraySequence<T>(){};
+        ImmutableArraySequence(Sequence<T> &sequence) : ArraySequence<T>(sequence) {};
         virtual PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
@@ -156,6 +181,7 @@ namespace PATypes {
     public:
         MutableArraySequence(T *items, int count) : ArraySequence<T>(items, count){};
         MutableArraySequence() : ArraySequence<T>(){};
+        MutableArraySequence(Sequence<T> &sequence) : ArraySequence<T>(sequence) {};
         virtual PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
@@ -184,6 +210,7 @@ namespace PATypes {
         ListSequence(T *items, int count) : list(items, count) {};
         ListSequence() : list() {};
         ListSequence(ListSequence<T>& listSequence) : list(listSequence.list) {};
+        ListSequence(Sequence<T>& sequence);
         T getFirst();
         T getLast();
         T get(int index);
@@ -268,6 +295,12 @@ namespace PATypes {
         ListSequence<T> *current = Instance();
         current->list.map(f);
         return current;
+    }
+    template<class T>
+    ListSequence<T>::ListSequence(Sequence<T> &sequence) : list() {
+        for (int i = 0; i < sequence.getLength(); ++i) {
+            list.append(sequence.get(i));
+        }
     }
 
     template<class T>
