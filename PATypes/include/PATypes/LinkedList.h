@@ -126,6 +126,7 @@ PATypes::LinkedList<T>::LinkedList(const LinkedList<T> &list) : size(list.size) 
         intermediate = new PATypes::LinkedListNode<T>(currentSource->getNext()->get());
         current->setNext(intermediate);
         currentSource = currentSource->getNext();
+        current = current->getNext();
     }
 }
 

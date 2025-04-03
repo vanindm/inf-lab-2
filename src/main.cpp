@@ -23,6 +23,6 @@ int main()
 	int* arr = new int[]{1,2,3};
 	PATypes::MutableListSequence<int> a(arr, 3);
 	PATypes::MutableListSequence<PATypes::MutableListSequence<int>> asdf(&a, 1);
-    std::cout << asdf[0][0] << "\n";
+    std::cout << asdf[0][2] << "\n";
     return 0;
 }
