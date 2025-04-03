@@ -246,6 +246,8 @@ namespace PATypes {
         virtual Sequence<T> *concat(Sequence<T> *list);
         virtual Sequence<T> *map(T (*f)(T));
         T operator[](int index);
+        ListSequence<T>& operator=(const ListSequence<T>& other);
+        ListSequence<T>& operator=(const ListSequence<T>&& other);
     private:
         LinkedList<T> list;
     protected:
@@ -282,7 +284,7 @@ namespace PATypes {
             throw std::out_of_range("при попытке вставить в ListSequence индекс за границами");
         ListSequence<T> *current = Instance();
         try {
-            return current->insertAt(index, item);
+            return current->insertAt(item, index);
         } catch (std::out_of_range&) {
             throw std::out_of_range("при попытке вставить в ListSequence индекс за границами");
         }
@@ -324,6 +326,18 @@ namespace PATypes {
         for (int i = 0; i < sequence.getLength(); ++i) {
             list.append(sequence.get(i));
         }
+    }
+
+    template<class T>
+    ListSequence<T> &ListSequence<T>::operator=(const ListSequence<T>& other) {
+		this->list = LinkedList<T>(other.list);
+        return *this;
+    }
+
+    template<class T>
+    ListSequence<T> &ListSequence<T>::operator=(const ListSequence<T>&& other) {
+		this->list = LinkedList<T>(other.list);
+        return *this;
     }
 
 	// ImmutableListSequence<ImmutableListSequence<int>>

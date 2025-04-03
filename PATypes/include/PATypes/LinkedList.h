@@ -11,6 +11,7 @@ namespace PATypes {
         T &get();
         void set(T value);
         void setNext(LinkedListNode *newNext);
+        LinkedListNode<T> &operator=(const LinkedListNode<T>& node);
 
     private:
         T value;
@@ -35,6 +36,7 @@ namespace PATypes {
         void insertAt(T item, int index);
         LinkedList<T> *concat(LinkedList<T> *list);
         void map(T (*f)(T));
+        PATypes::LinkedList<T> &operator=(const LinkedList<T>& array);
 
     private:
         int size;
@@ -77,6 +79,12 @@ void PATypes::LinkedListNode<T>::setNext(PATypes::LinkedListNode<T> *newNext) {
 }
 
 template<class T>
+PATypes::LinkedListNode<T> &PATypes::LinkedListNode<T>::operator=(const PATypes::LinkedListNode<T>& node) {
+    this->value = node.value;
+    return *this;
+}
+
+template<class T>
 PATypes::LinkedList<T>::LinkedList(T *items, int count) : size(count) {
     this->head = new PATypes::LinkedListNode<T>(items[0]);
     PATypes::LinkedListNode<T> *current = this->head;
@@ -109,7 +117,7 @@ PATypes::LinkedList<T>::LinkedList(PATypes::LinkedListNode<T> *start, int count)
 }
 
 template<class T>
-PATypes::LinkedList<T>::LinkedList(const LinkedList<T> &list) {
+PATypes::LinkedList<T>::LinkedList(const LinkedList<T> &list) : size(list.size) {
     this->head = new PATypes::LinkedListNode<T>(list.head->get());
     PATypes::LinkedListNode<T> *current = this->head;
     PATypes::LinkedListNode<T> *intermediate = nullptr;
@@ -244,4 +252,18 @@ void PATypes::LinkedList<T>::map(T (*f)(T)) {
         current->set(f(current->get()));
         current = current->getNext();
     }
+}
+
+template<class T>
+PATypes::LinkedList<T> &PATypes::LinkedList<T>::operator=(const PATypes::LinkedList<T>& list) {
+    this->head = new PATypes::LinkedListNode<T>(list.head->get());
+    PATypes::LinkedListNode<T> *current = this->head;
+    PATypes::LinkedListNode<T> *intermediate = nullptr;
+    PATypes::LinkedListNode<T> *currentSource = list.head;
+    while (currentSource->getNext() != nullptr) {
+        intermediate = new PATypes::LinkedListNode<T>(currentSource->getNext()->get());
+        current->setNext(intermediate);
+        currentSource = currentSource->getNext();
+    }
+    return *this;
 }

@@ -21,8 +21,8 @@ int main()
 {
 	//PATypes::MutableArraySequence<PATypes::MutableArraySequence<int>> asdf;
 	int* arr = new int[]{1,2,3};
-	PATypes::MutableArraySequence<int> a(arr, 3);
-	PATypes::MutableArraySequence<PATypes::MutableArraySequence<int>> asdf(&a, 1);
-    std::cout << asdf[0][2] << "\n";
+	PATypes::MutableListSequence<int> a(arr, 3);
+	PATypes::MutableListSequence<PATypes::MutableListSequence<int>> asdf(&a, 1);
+    std::cout << asdf[0][0] << "\n";
     return 0;
 }
