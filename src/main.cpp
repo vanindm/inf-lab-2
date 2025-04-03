@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "PATypes/DynamicArray.h"
 #include "PATypes/LinkedList.h"
@@ -18,19 +19,9 @@ int promptSize() {
 
 int main()
 {
-    int* arr = new int[]{1, 2};
-    PATypes::LinkedList<int> list(arr, 2);
-    PATypes::ImmutableArraySequence<int> seq(arr, 2);
-    PATypes::ImmutableArraySequence<int> seq2(arr, 2);
-    auto seq3 = PATypes::map(&sqr, &seq);
-    auto seqeq = PATypes::MutableArraySequence<int>(seq + seq2);
-    for (int i = 0; i < 4; i++) {
-        try {
-            std::cout << seqeq.get(i) << " ";
-        } catch (std::out_of_range& error) {
-            std::cout << error.what() << "\n";
-        }
-    }
-    delete[] arr;
+	//PATypes::MutableArraySequence<PATypes::MutableArraySequence<int>> asdf;
+	int* arr = new int[]{1,2,3};
+	PATypes::MutableArraySequence<int> a(arr, 3);
+	PATypes::MutableArraySequence<PATypes::MutableArraySequence<int>> asdf(&a, 1);
     return 0;
 }

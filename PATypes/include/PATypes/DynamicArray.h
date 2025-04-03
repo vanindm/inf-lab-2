@@ -17,6 +17,7 @@ namespace PATypes {
         void set(int index, T value);
         void resize(int newSize);
         T &operator[](int index);
+        T &operator[](const int& index) const;
 
     private:
         T *items;
@@ -40,7 +41,9 @@ PATypes::DynamicArray<T>::DynamicArray(int size) : size(size) {
 template<class T>
 PATypes::DynamicArray<T>::DynamicArray(const DynamicArray<T> &dynamicArray) : size(dynamicArray.size) {
     this->items = new T[this->size];
-    std::memcpy(this->items, dynamicArray.items, size * sizeof(T));
+    for (int i = 0; i < size; ++i) {
+        items[i] = T(dynamicArray[i]);
+    }
 }
 
 template<class T>
@@ -82,6 +85,13 @@ void PATypes::DynamicArray<T>::resize(int newSize) {
 
 template<class T>
 T &PATypes::DynamicArray<T>::operator[](int index) {
+    if (index < 0 || index > this->size - 1)
+        throw std::out_of_range("Попытка обращения к элементу за границами динамического массива");
+    return this->items[index];
+}
+
+template<class T>
+T &PATypes::DynamicArray<T>::operator[](const int& index) const {
     if (index < 0 || index > this->size - 1)
         throw std::out_of_range("Попытка обращения к элементу за границами динамического массива");
     return this->items[index];
