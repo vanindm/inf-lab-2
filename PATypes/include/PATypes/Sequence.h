@@ -46,14 +46,15 @@ namespace PATypes {
         virtual Sequence<T> *concat(Sequence<T> *list);
         virtual Sequence<T> *map(T (*f)(T));
         T operator[](int index);
-        ArraySequence<T>& operator=(ArraySequence<T>& other);
-        ArraySequence<T>& operator=(ArraySequence<T>&& other);
+        ArraySequence<T>& operator=(const ArraySequence<T>& other);
+        ArraySequence<T>& operator=(const ArraySequence<T>&& other);
 
     private:
         DynamicArray<T> array;
 
     protected:
         virtual ArraySequence<T> *Instance() = 0;
+        virtual ArraySequence<T> *Clone() = 0;
     };
 
     template<class T>
@@ -147,17 +148,15 @@ namespace PATypes {
     }
 
     template<class T>
-    ArraySequence<T> &ArraySequence<T>::operator=(ArraySequence<T>& other) {
-		ArraySequence<T>* current = Instance();
-		current->array = DynamicArray<T>(other.array);
-        return *current;
+    ArraySequence<T> &ArraySequence<T>::operator=(const ArraySequence<T>& other) {
+		this->array = DynamicArray<T>(other.array);
+        return *this;
     }
 
     template<class T>
-    ArraySequence<T> &ArraySequence<T>::operator=(ArraySequence<T>&& other) {
-		ArraySequence<T>* current = Instance();
-		current->array = DynamicArray<T>(other.array);
-        return *current;
+    ArraySequence<T> &ArraySequence<T>::operator=(const ArraySequence<T>&& other) {
+		this->array = DynamicArray<T>(other.array);
+        return *this;
     }
 
     template<class T>
@@ -169,7 +168,8 @@ namespace PATypes {
         virtual PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
-        virtual ArraySequence<T> *Instance();
+        ArraySequence<T> *Instance();
+        ArraySequence<T> *Clone();
     };
 
     template<class T>
@@ -189,6 +189,11 @@ namespace PATypes {
     }
 
     template<class T>
+    ArraySequence<T> *ImmutableArraySequence<T>::Clone() {
+        return new ImmutableArraySequence(*this);
+    }
+
+    template<class T>
     class MutableArraySequence : public ArraySequence<T> {
     public:
         MutableArraySequence(T *items, int count) : ArraySequence<T>(items, count){};
@@ -198,6 +203,7 @@ namespace PATypes {
 
     protected:
         ArraySequence<T> *Instance();
+        ArraySequence<T> *Clone();
     };
 
     template<class T>
@@ -214,6 +220,11 @@ namespace PATypes {
     template<class T>
     ArraySequence<T> *MutableArraySequence<T>::Instance() {
         return this;
+    }
+
+    template<class T>
+    ArraySequence<T> *MutableArraySequence<T>::Clone() {
+        return new MutableArraySequence(*this);
     }
 
     template<class T>
