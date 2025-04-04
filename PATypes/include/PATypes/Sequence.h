@@ -11,7 +11,6 @@ namespace PATypes {
         virtual ~Sequence() {};
         virtual T getFirst() = 0;
         virtual T getLast() = 0;
-        //virtual T get(int index) = 0;
         virtual int getLength() = 0;
         virtual Sequence<T> *getSubsequence(int startIndex, int endIndex) = 0;
         virtual Sequence<T> *append(T item) = 0;
@@ -24,7 +23,6 @@ namespace PATypes {
 
     template<class T>
     Sequence<T> &Sequence<T>::operator+(Sequence<T> &sequence) {
-        //Sequence<T>& aaa = *concat(&sequence);
         return *(this->concat(&sequence));
     }
 
@@ -117,13 +115,11 @@ namespace PATypes {
         return current;
     }
 
-	// TODO: сделать const
     template<class T>
     T ArraySequence<T>::operator[](int index) {
         return this->array[index];
     }
 
-	// TODO: сделать const
     template<class T>
     T ArraySequence<T>::get(size_t index) {
         return get((int)index);
@@ -334,8 +330,6 @@ namespace PATypes {
 		this->list = LinkedList<T>(other.list);
         return *this;
     }
-
-	// ImmutableListSequence<ImmutableListSequence<int>>
 
     template<class T>
     class ImmutableListSequence : public ListSequence<T> {

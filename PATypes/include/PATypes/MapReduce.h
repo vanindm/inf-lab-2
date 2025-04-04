@@ -20,4 +20,4 @@ namespace PATypes {
             return result;
         }
     }
-}
+};// namespace PATypes
