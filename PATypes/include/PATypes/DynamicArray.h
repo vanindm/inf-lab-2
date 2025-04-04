@@ -38,7 +38,9 @@ PATypes::DynamicArray<T>::DynamicArray(T *items, int count) : size(count) {
 template<class T>
 PATypes::DynamicArray<T>::DynamicArray(int size) : size(size) {
     this->items = new T[size];
-    std::memset(this->items, sizeof(T), size);
+    for(int i = 0; i < size; ++i) {
+        this->items[i] = T();
+    }
 }
 
 template<class T>
@@ -51,8 +53,8 @@ PATypes::DynamicArray<T>::DynamicArray(const DynamicArray<T> &dynamicArray) : si
 
 template<class T>
 PATypes::DynamicArray<T>::DynamicArray(int size, const DynamicArray<T> &dynamicArray) : size(size) {
-    this->items = new T[this->size];
-    for (int i = 0; i < size; ++i) {
+    this->items = new T[size];
+    for (int i = 0; i < dynamicArray.size; ++i) {
         this->items[i] = T(dynamicArray[i]);
     }
 }
@@ -107,7 +109,7 @@ T &PATypes::DynamicArray<T>::operator[](const int& index) const {
 template<class T>
 PATypes::DynamicArray<T> &PATypes::DynamicArray<T>::operator=(const PATypes::DynamicArray<T>& array) {
     if (this->items)
-        delete this->items;
+        delete[] this->items;
     this->size = array.size;
     this->items = new T[this->size];
     for (int i = 0; i < size; ++i) {

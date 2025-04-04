@@ -98,6 +98,7 @@ PATypes::LinkedList<T>::LinkedList(T *items, int count) : size(count) {
 
 template<class T>
 PATypes::LinkedList<T>::LinkedList() {
+    this->size = 0;
     this->head = nullptr;
 }
 
@@ -189,13 +190,20 @@ template<class T>
 PATypes::LinkedList<T> *PATypes::LinkedList<T>::getSubList(int startIndex, int endIndex) {
     if (startIndex < 0 || startIndex >= this->size || endIndex < 0 || endIndex >= this->size)
         throw std::out_of_range("Выход за границы при попытке получения subList LinkedList");
-    PATypes::LinkedListNode<T> *current = this->head;
+    PATypes::LinkedList<T>* newList = new PATypes::LinkedList<T>();
+    PATypes::LinkedListNode<T>* current = this->head;
     for (int i = 0; i < startIndex; i++) {
         current = current->getNext();
         if (current == nullptr)
             throw std::out_of_range("Выход за границы при попытке получения subList LinkedList");
     }
-    return new PATypes::LinkedList<T>(current, endIndex - startIndex + 1);
+    for (int i = 0; i <= endIndex; i++) {
+        newList->append(current->get());
+        current = current->getNext();
+        if (current == nullptr)
+            throw std::out_of_range("Выход за границы при попытке получения subList LinkedList");
+    }
+    return newList;
 }
 
 template<class T>
@@ -206,7 +214,10 @@ int PATypes::LinkedList<T>::getLength() {
 template<class T>
 void PATypes::LinkedList<T>::append(T item) {
     this->size++;
-    this->getLastNode().setNext(new LinkedListNode<T>(item));
+    if (this->head)
+        this->getLastNode().setNext(new LinkedListNode<T>(item));
+    else 
+        this->head = new LinkedListNode<T>(item);
 }
 
 template<class T>
@@ -258,12 +269,14 @@ void PATypes::LinkedList<T>::map(T (*f)(T)) {
 template<class T>
 PATypes::LinkedList<T> &PATypes::LinkedList<T>::operator=(const PATypes::LinkedList<T>& list) {
     this->head = new PATypes::LinkedListNode<T>(list.head->get());
+    this->size = list.size;
     PATypes::LinkedListNode<T> *current = this->head;
     PATypes::LinkedListNode<T> *intermediate = nullptr;
     PATypes::LinkedListNode<T> *currentSource = list.head;
     while (currentSource->getNext() != nullptr) {
         intermediate = new PATypes::LinkedListNode<T>(currentSource->getNext()->get());
         current->setNext(intermediate);
+        current = current->getNext();
         currentSource = currentSource->getNext();
     }
     return *this;

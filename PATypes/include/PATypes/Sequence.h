@@ -8,6 +8,7 @@ namespace PATypes {
     template<class T>
     class Sequence : public ICollection<T> {
     public:
+        virtual ~Sequence() {};
         virtual T getFirst() = 0;
         virtual T getLast() = 0;
         //virtual T get(int index) = 0;
@@ -34,6 +35,8 @@ namespace PATypes {
         ArraySequence() : array(0) {};
         ArraySequence(const ArraySequence &arraySequence) : array(arraySequence.array) {};
         ArraySequence(Sequence<T> &sequence);
+        ArraySequence(int size) : array(size) {}
+        virtual ~ArraySequence() {};
         virtual T getFirst();
         virtual T getLast();
         virtual T get(int index);
@@ -49,10 +52,8 @@ namespace PATypes {
         ArraySequence<T>& operator=(const ArraySequence<T>& other);
         ArraySequence<T>& operator=(const ArraySequence<T>&& other);
 
-    private:
-        DynamicArray<T> array;
-
     protected:
+        DynamicArray<T> array;
         virtual ArraySequence<T> *Instance() = 0;
         virtual ArraySequence<T> *Clone() = 0;
     };
@@ -110,6 +111,7 @@ namespace PATypes {
         int previousLength = current->getLength();
         DynamicArray<T>* array = new DynamicArray<T>(previousLength + list->getLength(), this->array);
         current->array = *array;
+        delete array;
         for (int i = 0; i < list->getLength(); ++i)
             current->array.set(i + previousLength, list->get(i));
         return current;
@@ -162,9 +164,10 @@ namespace PATypes {
     template<class T>
     class ImmutableArraySequence : public ArraySequence<T> {
     public:
-        ImmutableArraySequence(T *items, int count) : ArraySequence<T>(items, count){};
+        ImmutableArraySequence(T *items, int count) : ArraySequence<T>(items, count){}
         ImmutableArraySequence() : ArraySequence<T>(){};
-        ImmutableArraySequence(Sequence<T> &sequence) : ArraySequence<T>(sequence) {};
+        ImmutableArraySequence(Sequence<T> &sequence) : ArraySequence<T>(sequence) {}
+        ImmutableArraySequence(int size) : ArraySequence<T>(size) {};
         virtual PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
@@ -176,9 +179,9 @@ namespace PATypes {
     Sequence<T> *ImmutableArraySequence<T>::getSubsequence(int startIndex, int endIndex) {
         if (startIndex < 0 || startIndex >= this->getLength() || endIndex < 0 || endIndex >= this->getLength())
             throw std::out_of_range("Индекс за границами при попытке получения подпоследовательности ImmutableArraySequence");
-        ImmutableArraySequence<T> *current = new ImmutableArraySequence<T>(*this);
+        ImmutableArraySequence<T> *current = new ImmutableArraySequence<T>(endIndex - startIndex + 1);
         for (int i = startIndex; i <= endIndex; ++i) {
-            current->append(this->get(i));
+            current->array.set(i, this->array.get(i));
         }
         return current;
     }
@@ -199,6 +202,7 @@ namespace PATypes {
         MutableArraySequence(T *items, int count) : ArraySequence<T>(items, count){};
         MutableArraySequence() : ArraySequence<T>(){};
         MutableArraySequence(Sequence<T> &sequence) : ArraySequence<T>(sequence) {};
+        MutableArraySequence(int size) : ArraySequence<T>(size) {};
         PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
@@ -209,10 +213,10 @@ namespace PATypes {
     template<class T>
     Sequence<T> *MutableArraySequence<T>::getSubsequence(int startIndex, int endIndex) {
         if (startIndex < 0 || startIndex >= this->getLength() || endIndex < 0 || endIndex >= this->getLength())
-            throw std::out_of_range("Индекс за границами при попытке получения подпоследовательности MutableArraySequence");
-        MutableArraySequence<T> *current = new MutableArraySequence<T>(*this);
+            throw std::out_of_range("Индекс за границами при попытке получения подпоследовательности ImmutableArraySequence");
+        MutableArraySequence<T> *current = new MutableArraySequence<T>(endIndex - startIndex + 1);
         for (int i = startIndex; i <= endIndex; ++i) {
-            current->append(this->get(i));
+            current->array.set(i, this->array.get(i));
         }
         return current;
     }
@@ -234,6 +238,7 @@ namespace PATypes {
         ListSequence() : list() {};
         ListSequence(ListSequence<T>& listSequence) : list(listSequence.list) {};
         ListSequence(Sequence<T>& sequence);
+        ~ListSequence() {};
         T getFirst();
         T getLast();
         T get(int index);
@@ -243,14 +248,13 @@ namespace PATypes {
         virtual Sequence<T> *getSubsequence(int startIndex, int endIndex) = 0;
         virtual Sequence<T> *append(T item);
         virtual Sequence<T> *insertAt(T item, int index);
-        virtual Sequence<T> *concat(Sequence<T> *list);
+        //virtual Sequence<T> *concat(Sequence<T> *list) = 0;
         virtual Sequence<T> *map(T (*f)(T));
         T operator[](int index);
         ListSequence<T>& operator=(const ListSequence<T>& other);
         ListSequence<T>& operator=(const ListSequence<T>&& other);
-    private:
-        LinkedList<T> list;
     protected:
+        LinkedList<T> list;
         virtual ListSequence<T> *Instance() = 0;
     };
 
@@ -287,15 +291,6 @@ namespace PATypes {
             return current->insertAt(item, index);
         } catch (std::out_of_range&) {
             throw std::out_of_range("при попытке вставить в ListSequence индекс за границами");
-        }
-        return current;
-    }
-
-    template<class T>
-    Sequence<T> *ListSequence<T>::concat(Sequence<T> *list) {
-        ListSequence<T> *current = Instance();
-        for (int i = 0; i < list->getLength(); ++i) {
-            current->append(list->get(i));
         }
         return current;
     }
@@ -346,7 +341,9 @@ namespace PATypes {
     class ImmutableListSequence : public ListSequence<T> {
     public:
         ImmutableListSequence(T *items, int count) : ListSequence<T>(items, count){};
+        ImmutableListSequence(Sequence<T>& sequence) : ListSequence<T>(sequence) {};
         ImmutableListSequence() : ListSequence<T>(){};
+        Sequence<T> *concat(Sequence<T> *list);
         virtual PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
@@ -362,9 +359,21 @@ namespace PATypes {
     Sequence<T> *ImmutableListSequence<T>::getSubsequence(int startIndex, int endIndex) {
         if (startIndex < 0 || startIndex >= this->getLength() || endIndex < 0 || endIndex >= this->getLength())
             throw std::out_of_range("Индекс за границами при попытке получения подпоследовательности ImmutableListSequence");
-        ImmutableListSequence<T> *current = new ImmutableListSequence<T>(*this);
+        ImmutableListSequence<T> *current = new ImmutableListSequence<T>();
         for (int i = startIndex; i <= endIndex; ++i) {
             current->append(this->get(i));
+        }
+        return current;
+    }
+
+    template <class T>
+    Sequence<T> *ImmutableListSequence<T>::concat(Sequence<T> *list) {
+        Sequence<T> *current = Instance();
+        Sequence<T> *old;
+        for (int i = 0; i < list->getLength(); ++i) {
+            old = current;
+            current = current->append(list->get(i));
+            delete old;
         }
         return current;
     }
@@ -373,7 +382,9 @@ namespace PATypes {
     class MutableListSequence : public ListSequence<T> {
     public:
         MutableListSequence(T *items, int count) : ListSequence<T>(items, count){};
+        MutableListSequence(Sequence<T>& sequence) : ListSequence<T>(sequence) {};
         MutableListSequence() : ListSequence<T>(){};
+        Sequence<T> *concat(Sequence<T> *list);
         virtual PATypes::Sequence<T> *getSubsequence(int startIndex, int endIndex);
 
     protected:
@@ -389,9 +400,18 @@ namespace PATypes {
     Sequence<T> *MutableListSequence<T>::getSubsequence(int startIndex, int endIndex) {
         if (startIndex < 0 || startIndex >= this->getLength() || endIndex < 0 || endIndex >= this->getLength())
             throw std::out_of_range("Индекс за границами при попытке получения подпоследовательности MutableListSequence");
-        MutableListSequence<T> *current = new MutableListSequence<T>(*this);
-        for (int i = startIndex; i <= endIndex; ++i) {
-            current->append(this->get(i));
+        MutableListSequence<T> *current = new MutableListSequence<T>();
+        auto sublist = this->list.getSubList(startIndex, endIndex);
+        current->list = *sublist;
+        delete sublist;
+        return current;
+    }
+
+    template <class T>
+    Sequence<T> *MutableListSequence<T>::concat(Sequence<T> *list) {
+        Sequence<T> *current = Instance();
+        for (int i = 0; i < list->getLength(); ++i) {
+            current = current->append(list->get(i));
         }
         return current;
     }
