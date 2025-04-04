@@ -5,20 +5,21 @@
 Компилятор, совместимый со стандартом C++11; CMake
 
 ```bash
-# pacman -Syu gcc cmake
+pacman -Syu gcc cmake
 ```
 
 ## Компиляция
 
-```
-$ mkdir -p build
-$ cd build
-$ cmake ..
-$ make
+```bash
+mkdir -p build
+cd build
+cmake ..
+make
 ```
 
 ## Тестирование
 
-```
+```bash
+cd build
 ctest
 ```
