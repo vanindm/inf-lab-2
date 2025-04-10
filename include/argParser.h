@@ -1,7 +1,11 @@
+#pragma once
+
 #include <string>
 #include <map>
 
 #include "PATypes/Sequence.h"
+#include "PATypes/IEnumerable.h"
+#include "PATypes/IEnumerator.h"
 
 namespace ArgParser {
 	class ArgumentParser {
