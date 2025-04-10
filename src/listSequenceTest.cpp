@@ -39,9 +39,15 @@ int main(int argc, char **argv) {
 		int reduceTest = reduce(&sum, &mutTest, 0);
 		assert(reduceTest == 42);
 
+		PATypes::IEnumerator<int> *enumerator = mutTest.getEnumerator();
+		assert(enumerator->current() == 1);
+		enumerator->moveNext();
+		assert(enumerator->current() == 2);
+
 		delete[] arr;
 		delete mapTest;
 		delete immutConcat;
+		delete enumerator;
 	} catch (std::exception& exception) {
 		std::cout << exception.what() << std::endl;
 		return 1;	

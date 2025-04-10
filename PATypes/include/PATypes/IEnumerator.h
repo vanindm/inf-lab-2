@@ -6,12 +6,8 @@ namespace PATypes {
 	class IEnumerator {
 	public:
 		virtual bool moveNext() = 0;
-		virtual T &current() {
-			return *ptr;
-		};
-		void reset();
-	private:
-		T* ptr;
+		virtual T &current() = 0;
+		virtual void reset() = 0;
 	};
 
 }

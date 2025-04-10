@@ -19,7 +19,7 @@ namespace PATypes {
     };
 
     template<class T>
-    class LinkedList {
+    class LinkedList : IEnumerable<T>{
     public:
         LinkedList(T *items, int count);
         LinkedList();
@@ -37,8 +37,37 @@ namespace PATypes {
         LinkedList<T> *concat(LinkedList<T> *list);
         void map(T (*f)(T));
         PATypes::LinkedList<T> &operator=(const LinkedList<T>& array);
+		IEnumerator<T> *getEnumerator() {
+			return new Enumerator(*this);
+		}
 
     private:
+		class Enumerator : public IEnumerator<T> {
+		public:
+			Enumerator(LinkedList<T> &parent) : parent(parent), ptr(parent.head) {}
+			Enumerator(LinkedList<T> &parent, LinkedListNode<T> *ptr) : parent(parent), ptr(ptr) {}
+			
+			virtual bool moveNext() {
+				if (ptr->getNext() == nullptr) {
+					throw std::out_of_range("выход за границы LinkedList при использовании Enumerator");
+					return 1;
+				}
+				ptr = ptr->getNext();
+				return 0;
+			}
+
+			virtual T &current() {
+				return (ptr->get());
+			}
+
+			virtual void reset() {
+				ptr = parent.head;
+			}
+
+		private:
+			LinkedList<T> &parent;
+			LinkedListNode<T>* ptr;
+		};
         int size;
         LinkedListNode<T> *head;
         LinkedListNode<T> &getNode(int index);
