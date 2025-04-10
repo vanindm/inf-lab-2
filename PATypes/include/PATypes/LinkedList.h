@@ -49,11 +49,10 @@ namespace PATypes {
 			
 			virtual bool moveNext() {
 				if (ptr->getNext() == nullptr) {
-					throw std::out_of_range("выход за границы LinkedList при использовании Enumerator");
-					return 1;
+					return 0;
 				}
 				ptr = ptr->getNext();
-				return 0;
+				return 1;
 			}
 
 			virtual T &current() {

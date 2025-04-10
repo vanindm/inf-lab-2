@@ -34,12 +34,11 @@ namespace PATypes {
 			Enumerator(DynamicArray<T> &parent, T *ptr) : parent(parent), ptr(ptr) {}
 			
 			virtual bool moveNext() {
-				if (ptr - parent.items >= parent.getSize() || (ptr - parent.items) < 0) {
-					throw std::out_of_range("выход за границы DynamicArray при использовании Enumerator");
-					return 1;
+				if (ptr - parent.items >= parent.getSize() - 1 || (ptr - parent.items) < 0) {
+					return 0;
 				}
 				ptr++;
-				return 0;
+				return 1;
 			}
 
 			virtual T &current() {
