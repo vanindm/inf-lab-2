@@ -44,10 +44,10 @@ int main(int argc, char **argv) {
 		enumerator->moveNext();
 		assert(enumerator->current() == 2);
 
+		delete enumerator;
 		delete[] arr;
 		delete mapTest;
 		delete immutConcat;
-		delete enumerator;
 	} catch (std::exception& exception) {
 		std::cout << exception.what() << std::endl;
 		return 1;	
