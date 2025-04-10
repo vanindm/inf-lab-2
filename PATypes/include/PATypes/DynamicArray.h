@@ -1,11 +1,15 @@
 #pragma once
+
 #include <cstring>
 #include <stdexcept>
+
+#include "IEnumerable.h"
+#include "IEnumerator.h"
 
 namespace PATypes {
 
     template<class T>
-    class DynamicArray {
+    class DynamicArray : public IEnumerable<T> {
     public:
         DynamicArray(T *items, int count);
         DynamicArray(int size);
@@ -19,8 +23,37 @@ namespace PATypes {
         T &operator[](int index);
         T &operator[](const int& index) const;
         PATypes::DynamicArray<T> &operator=(const DynamicArray<T>& array);
+		IEnumerator<T> *getEnumerator() {
+			return new Enumerator(*this);
+		}
 
     private:
+		class Enumerator : public IEnumerator<T> {
+		public:
+			Enumerator(DynamicArray<T> &parent) : parent(parent), ptr(parent.items) {}
+			Enumerator(DynamicArray<T> &parent, T *ptr) : parent(parent), ptr(ptr) {}
+			
+			virtual bool moveNext() {
+				if (ptr - parent.items >= parent.getSize() || (ptr - parent.items) < 0) {
+					throw std::out_of_range("выход за границы DynamicArray при использовании Enumerator");
+					return 1;
+				}
+				ptr++;
+				return 0;
+			}
+
+			virtual T &current() {
+				return *ptr;
+			}
+
+			virtual void reset() {
+				ptr = parent.items;
+			}
+
+		private:
+			DynamicArray<T> &parent;
+			T* ptr;
+		};
         T *items;
         int size;
     };

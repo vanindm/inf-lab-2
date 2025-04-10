@@ -27,7 +27,7 @@ namespace PATypes {
     }
 
     template<class T>
-    class ArraySequence : public Sequence<T> {
+    class ArraySequence : public Sequence<T>, public IEnumerable<T> {
     public:
         ArraySequence(T *items, int count) : array(items, count) {}
         ArraySequence() : array(0) {};
@@ -49,6 +49,7 @@ namespace PATypes {
         T operator[](int index);
         ArraySequence<T>& operator=(const ArraySequence<T>& other);
         ArraySequence<T>& operator=(const ArraySequence<T>&& other);
+		IEnumerator<T> *getEnumerator() { return array.getEnumerator(); }
 
     protected:
         DynamicArray<T> array;
@@ -117,7 +118,7 @@ namespace PATypes {
 
     template<class T>
     T ArraySequence<T>::operator[](int index) {
-        return this->array[index];
+        return get(index);
     }
 
     template<class T>
@@ -228,7 +229,7 @@ namespace PATypes {
     }
 
     template<class T>
-    class ListSequence : public Sequence<T> {
+    class ListSequence : public Sequence<T>, public IEnumerable<T> {
     public:
         ListSequence(T *items, int count) : list(items, count) {};
         ListSequence() : list() {};
@@ -249,6 +250,7 @@ namespace PATypes {
         T operator[](int index);
         ListSequence<T>& operator=(const ListSequence<T>& other);
         ListSequence<T>& operator=(const ListSequence<T>&& other);
+		IEnumerator<T> *getEnumerator() { return list.getEnumerator(); }
     protected:
         LinkedList<T> list;
         virtual ListSequence<T> *Instance() = 0;
