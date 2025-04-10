@@ -117,7 +117,7 @@ namespace PATypes {
 
     template<class T>
     T ArraySequence<T>::operator[](int index) {
-        return this->array[index];
+        return get(index);
     }
 
     template<class T>
