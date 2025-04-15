@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(Lab2)
+
+include(CTest)
+set(MemoryCheckCommand valgrind)
+
 set(LAB2_SRC_LIST src/arraySequenceTest.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23 -Wall -g")

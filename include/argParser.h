@@ -40,6 +40,7 @@ namespace ArgParser {
 				}
 				isNotCompleted = enumerator->moveNext();
 			}
+            delete enumerator;
 		}
 	};
 }

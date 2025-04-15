@@ -63,8 +63,6 @@ int main(int argc, char *argv[]) {
 		{
 			case 1:
 				switch(promptADT()) {
-					case 1:
-
 				}
 				break;
 			case 2:
