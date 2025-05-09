@@ -258,7 +258,7 @@ namespace PATypes {
         ListSequence<T>& operator=(const ListSequence<T>&& other);
 		IEnumerator<T> *getEnumerator() { return list.getEnumerator(); }
     protected:
-        LinkedList<T> list;
+        SegmentedList<T> list;
         virtual ListSequence<T> *Instance() = 0;
     };
 
@@ -337,13 +337,13 @@ namespace PATypes {
 
     template<class T>
     ListSequence<T> &ListSequence<T>::operator=(const ListSequence<T>& other) {
-		this->list = LinkedList<T>(other.list);
+		this->list = SegmentedList<T>(other.list);
         return *this;
     }
 
     template<class T>
     ListSequence<T> &ListSequence<T>::operator=(const ListSequence<T>&& other) {
-		this->list = LinkedList<T>(other.list);
+		this->list = SegmentedList<T>(other.list);
         return *this;
     }
 
