@@ -15,7 +15,7 @@ namespace PATypes {
         DynamicArray(int size);
         DynamicArray(const DynamicArray<T> &dynamicArray);
         DynamicArray(int size, const DynamicArray<T> &dynamicArray);
-        ~DynamicArray();
+        virtual ~DynamicArray();
         T get(int index);
         int getSize();
         void set(int index, T value);
@@ -32,7 +32,8 @@ namespace PATypes {
 		public:
 			Enumerator(DynamicArray<T> &parent) : parent(parent), ptr(parent.items) {}
 			Enumerator(DynamicArray<T> &parent, T *ptr) : parent(parent), ptr(ptr) {}
-			
+			virtual ~Enumerator() {}
+
 			virtual bool moveNext() {
 				if (ptr - parent.items >= parent.getSize() - 1 || (ptr - parent.items) < 0) {
 					return 0;

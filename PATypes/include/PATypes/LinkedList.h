@@ -25,7 +25,7 @@ namespace PATypes {
         LinkedList();
         LinkedList(LinkedListNode<T> *start, int count);
         LinkedList(const LinkedList<T> &list);
-        ~LinkedList();
+        virtual ~LinkedList();
         T getFirst();
         T getLast();
         T get(int index);

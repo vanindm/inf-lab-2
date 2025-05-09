@@ -2,6 +2,7 @@
 
 #include "DynamicArray.h"
 #include "LinkedList.h"
+#include "SegmentedList.h"
 #include "ICollection.h"
 
 namespace PATypes {
@@ -240,7 +241,7 @@ namespace PATypes {
         ListSequence(ListSequence<T>& listSequence) : list(listSequence.list) {};
         ListSequence(Sequence<T>& sequence);
         ListSequence(T item) : list(&item, 1) {};
-        ~ListSequence() {};
+        virtual ~ListSequence() {};
         T getFirst();
         T getLast();
         T get(int index);
@@ -258,7 +259,7 @@ namespace PATypes {
         ListSequence<T>& operator=(const ListSequence<T>&& other);
 		IEnumerator<T> *getEnumerator() { return list.getEnumerator(); }
     protected:
-        SegmentedList<T> list;
+        LinkedList<T> list;
         virtual ListSequence<T> *Instance() = 0;
     };
 
@@ -337,7 +338,7 @@ namespace PATypes {
 
     template<class T>
     ListSequence<T> &ListSequence<T>::operator=(const ListSequence<T>& other) {
-		this->list = SegmentedList<T>(other.list);
+		this->list = LinkedList<T>(other.list);
         return *this;
     }
 

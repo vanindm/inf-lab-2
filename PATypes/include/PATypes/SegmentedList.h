@@ -16,7 +16,7 @@ namespace PATypes {
         SegmentedList();
         SegmentedList(LinkedListNode<DynamicArray<T>> *start, int count);
         SegmentedList(const SegmentedList<T> &list);
-        ~SegmentedList();
+        virtual ~SegmentedList();
         T getFirst();
         T getLast();
         T get(int index);
@@ -28,28 +28,28 @@ namespace PATypes {
         SegmentedList<T> *concat(SegmentedList<T> *list);
         void map(T (*f)(T));
         SegmentedList<T> &operator=(const SegmentedList<T>& array);
-		IEnumerator<T> *getEnumerator() {
-			return new Enumerator(*this);
-		}
+		//IEnumerator<T> *getEnumerator() {
+		//	return new Enumerator(*this);
+		//}
 	};
 
 	template<class T>
 	SegmentedList<T>::SegmentedList(T *items, int count) : size(count) {
 		if (count >= 21) {
-			this->head = new LinkedListNode<DynamicArray<T>>(DynamicArray(T, 21));
+			this->head = new LinkedListNode<DynamicArray<T>>(DynamicArray<T>(items, 21));
 			LinkedListNode<DynamicArray<T>> *current = this->head;
 			LinkedListNode<DynamicArray<T>> *intermediate = nullptr;
 
 			for (int i = 1; i < count / 21; ++i) {
 				if (count - i * 21 >= 21)
-					intermediate = new LinkedListNode<DynamicArray<T>>(DynamicArray(T + i * 21), 21);
+					intermediate = new LinkedListNode<DynamicArray<T>>(DynamicArray<T>(items + i * 21), 21);
 				else
-					intermediate = new LinkedListNode<DynamicArray<T>>(DynamicArray(T + i * 21), count - i * 21);
+					intermediate = new LinkedListNode<DynamicArray<T>>(DynamicArray<T>(items + i * 21), count - i * 21);
 				current->setNext(intermediate);
 				current = current->getNext();
 			}
 		} else
-			this->head = new LinkedListNode<DynamicArray<T>>(DynamicArray(T, count));
+			this->head = new LinkedListNode<DynamicArray<T>>(DynamicArray<T>(items, count));
 	}
 
 	template<class T>
